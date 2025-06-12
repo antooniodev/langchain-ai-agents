@@ -13,7 +13,10 @@ load_dotenv()
 pergunta = "Quais os dados da Bianca? Busque pelo nome."
 pergunta = "Quais os dados da Ana? Busque pelo nome."
 pergunta = "Quais os dados da Ana e da Bianca? Busque pelo nome."
-pergunta 
+pergunta = "Busque os dados da Ana pelo seu nome e depois crie seu perfil acadêmico."
+pergunta = "Compare o perfil acadêmico da Ana com o da Bianca!"
+# pergunta = "Busque os dados pelos nomes e depois responda: Tenho sentido Ana desanimada com cursos de matemática. Seria uma boa parear ela com o Marcos?"
+
 # Inicializa o agente personalizado
 agent = AgentGeminiFunctions()
 
