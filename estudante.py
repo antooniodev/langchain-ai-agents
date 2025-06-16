@@ -18,7 +18,7 @@ def busca_dados_estudante(estudante):
 
 # Modelo Pydantic para extrair o nome do estudante
 class ExtratorDeEstudante(BaseModel):
-    estudante: str = Field("Nome do estudante informado, sempre em letras minusculas. Exemplo: ana, joão, carlos.")
+    estudante: str = Field("Nome do estudante informado, sempre em letras minusculas.")
 
 # Classe principal da ferramenta
 class DadosDeEstudantes(BaseTool):
@@ -31,31 +31,35 @@ class DadosDeEstudantes(BaseTool):
     
     # Método principal que executa o fluxo de extração
     def _run(self, input: str) -> str:
-        # # Inicializa o modelo de linguagem da Google com a chave de API
-        # LLM = ChatGoogleGenerativeAI(model="gemini-2.0-flash", api_key=os.getenv("API_KEY"))
+        # Inicializa o modelo de linguagem da Google com a chave de API
+        LLM = ChatGoogleGenerativeAI(model="gemini-2.0-flash", api_key=os.getenv("API_KEY"))
         
-        # # Define o parser para extrair o nome do estudante no formato JSON
-        # parser = JsonOutputParser(pydantic_object=ExtratorDeEstudante)
+        # Define o parser para extrair o nome do estudante no formato JSON
+        parser = JsonOutputParser(pydantic_object=ExtratorDeEstudante)
         
-        # # Cria o prompt para o modelo de linguagem, instruindo como extrair o nome
-        # template = PromptTemplate(
-        #     template="""Você deve analisar a {input} e extrair o nome do usuário informado.
-        #                Formato de saída:
-        #                {formato_saida}""",
-        #     input_variables=["input"],
-        #     partial_variables={"formato_saida": parser.get_format_instructions()}
-        # )
+        # Cria o prompt para o modelo de linguagem, instruindo como extrair o nome
+        template = PromptTemplate(
+            template="""Você deve analisar a entrada a seguir e extrair o nome informado em minúsculo.
+            Entrada:
+            -----------------
+            {input}
+            -----------------
+                       Formato de saída:
+                       {formato_saida}""",
+            input_variables=["input"],
+            partial_variables={"formato_saida": parser.get_format_instructions()}
+        )
         
-        # # Monta a cadeia de execução: prompt -> LLM -> parser
-        # chain = template | LLM | parser
+        # Monta a cadeia de execução: prompt -> LLM -> parser
+        chain = template | LLM | parser
         
-        # # Executa a cadeia com o texto de entrada e obtém o resultado
-        # result = chain.invoke({"input": input})
+        # Executa a cadeia com o texto de entrada e obtém o resultado
+        result = chain.invoke({"input": input})
         
-        # # Extrai o nome do estudante do resultado e converte para minúsculas
-        # estudante = result['estudante']
-        # estudante = estudante.lower()
-        estudante = input.lower()
+        # Extrai o nome do estudante do resultado e converte para minúsculas
+        estudante = result['estudante']
+        estudante = estudante.lower().strip()
+        # estudante = input.lower().strip()
         # Busca os dados do estudante no CSV
         dados = busca_dados_estudante(estudante)
         
